@@ -7,7 +7,9 @@ export const getTasks = (req, res) => {
   let result = data.TASKS;
 
   if (search) {
-    result = result.filter((t) => t.title.includes(search));
+    result = result.filter((t) =>
+      t.task.toLowerCase().includes(search.toLowerCase()),
+    );
   }
 
   res.json({
@@ -35,11 +37,13 @@ export const getTask = (req, res) => {
 };
 
 export const createTask = (req, res) => {
-  const { task, complete } = req.body;
+  const { task, assignee, urgent, complete } = req.body;
 
   const newTask = {
     id: data.idCounter++,
     task,
+    assignee,
+    urgent: urgent === "true",
     complete: complete === "true",
   };
 
@@ -64,10 +68,18 @@ export const updateTask = (req, res) => {
     });
   }
 
-  const { task, complete } = req.body;
+  const { task, assignee, urgent, complete } = req.body;
 
   if (task !== undefined) {
     taskToUpdate.task = task;
+  }
+
+  if (assignee !== undefined) {
+    taskToUpdate.assignee = assignee;
+  }
+
+  if (urgent !== undefined) {
+    taskToUpdate.urgent = urgent === "true";
   }
 
   if (complete !== undefined) {

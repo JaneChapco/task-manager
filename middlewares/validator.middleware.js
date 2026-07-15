@@ -1,10 +1,17 @@
 const validateTaskBody = (req, res, next) => {
-  const { task, complete } = req.body;
+  const { task, assignee, urgent, complete } = req.body;
 
   if (req.method === "POST" && task === undefined) {
     return res.status(400).json({
       status: "FAILED",
       message: "Task is required.",
+    });
+  }
+
+  if (req.method === "POST" && assignee === undefined) {
+    return res.status(400).json({
+      status: "FAILED",
+      message: "Assignee is required.",
     });
   }
 
@@ -15,6 +22,23 @@ const validateTaskBody = (req, res, next) => {
     return res.status(400).json({
       status: "FAILED",
       message: "Invalid task. Task must be at least 5 characters.",
+    });
+  }
+
+  if (
+    assignee !== undefined &&
+    (typeof assignee !== "string" || assignee.trim().length < 3)
+  ) {
+    return res.status(400).json({
+      status: "FAILED",
+      message: "Invalid assignee. Assignee must be at least 3 characters.",
+    });
+  }
+
+  if (urgent !== undefined && urgent !== "true" && urgent !== "false") {
+    return res.status(400).json({
+      status: "FAILED",
+      message: "Urgent must be true or false.",
     });
   }
 
